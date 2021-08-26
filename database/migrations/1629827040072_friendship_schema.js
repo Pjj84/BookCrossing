@@ -7,6 +7,9 @@ class FriendshipSchema extends Schema {
   up () {
     this.create('friendships', (table) => {
       table.increments()
+      table.foreign('sender_id').references('users.id').onDelete('CASCADE')
+      table.foreign('receiver_id').references('users.id').onDelete('CASCADE')
+      table.enum('status',['pending','accepted']),{ useNative: true, enumName: 'friendship_status'}
       table.timestamps()
     })
   }

@@ -7,6 +7,8 @@ class StorySchema extends Schema {
   up () {
     this.create('stories', (table) => {
       table.increments()
+      table.foreign('book_id').references('book.id')
+      table.integer('journies') // The number of journies in this story
       table.timestamps()
     })
   }

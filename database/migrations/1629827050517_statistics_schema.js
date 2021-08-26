@@ -7,6 +7,9 @@ class StatisticsSchema extends Schema {
   up () {
     this.create('statistics', (table) => {
       table.increments()
+      table.foreign('user_id').references('users.id').onDelete('CASCADE')
+      table.integer('books_registerd')
+      table.integer('wild_releases')
       table.timestamps()
     })
   }

@@ -8,9 +8,9 @@ class BookSchema extends Schema {
     this.create('books', (table) => {
       table.increments()
       table.foreign('owner_id').references('user.id').notNullable().onDelete('CASCADE')
-      table.string('current_postion') // Format => Country/City
+      table.string('current_postion') // Format => City/Neighberhood
       table.string('isbn',13)
-      table.string('description',200)
+      table.text('description',200)
       table.string('author',120)
       table.string('cover_image').defaultTo('default_image.jpg')
       table.timestamps()
