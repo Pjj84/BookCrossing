@@ -7,6 +7,10 @@ class CommentSchema extends Schema {
   up () {
     this.create('comments', (table) => {
       table.increments()
+      table.foreign('story_id').references('story.id').onDelete('CASCADE')
+      table.foreign('user_id').references('users.id').onDelete('CASCADE')
+      table.text('text','long text')
+      table.foreign('replying_to').references('comments.id').onDelete('CASCADE').nullabel()
       table.timestamps()
     })
   }
