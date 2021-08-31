@@ -13,7 +13,7 @@ class UserSchema extends Schema {
       table.enum("role",['normal','admin']), { useNative: true, enumName: 'user_role'}
       table.enum('visibilty',['private','public']), { useNative: true, enumName: 'user_visibilty'}
       table.string('bio',120)
-      table.string('picture').defaultTo('default.jpg')
+      table.string('profile').defaultTo('default.jpg')
       table.timestamps()
     })
   }
