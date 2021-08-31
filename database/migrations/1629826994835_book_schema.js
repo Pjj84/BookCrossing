@@ -13,6 +13,7 @@ class BookSchema extends Schema {
       table.text('description',200)
       table.string('author',120)
       table.string('cover_image').defaultTo('default_image.jpg')
+      table.enum('status',['pending','accepted']) 
       table.timestamps()
     })
   }
