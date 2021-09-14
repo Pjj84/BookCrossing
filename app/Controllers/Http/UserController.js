@@ -34,7 +34,7 @@ class UserController {
             }else if(res.status == 401){
                     return response.status(401)
             }else{
-                return response.status(400) // No api token nor credentials
+                return response.status(400)
             }
 
             }).catch((error) => {

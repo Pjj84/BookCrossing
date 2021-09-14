@@ -5,9 +5,9 @@ const Schema = use('Schema')
 
 class StorySchema extends Schema {
   up () {
-    knex.schema.raw("BARCODE = 10000000000")
-    .table('stories', (table) => {
+    this.create('stories', (table) => {
       table.increments()
+      table.integer('book_id').notNullable()
       table.foreign('book_id').references('book.id')
       table.integer('journies') // The number of journies in this story
       table.integer('barcode').unique().unsigned()
