@@ -7,6 +7,7 @@ class RatingSchema extends Schema {
   up () {
     this.create('ratings', (table) => {
       table.increments()
+      table.integer('user_id').notNullable()
       table.foreign('user_id').references("users.id").onDelete("CASCADE")
       table.integer('rate').notNullable()
       table.timestamps()

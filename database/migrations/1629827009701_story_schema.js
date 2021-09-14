@@ -8,8 +8,8 @@ class StorySchema extends Schema {
     this.create('stories', (table) => {
       table.increments()
       table.integer('book_id').notNullable()
-      table.foreign('book_id').references('book.id')
-      table.integer('journies') // The number of journies in this story
+      table.foreign('book_id').references('books.id')
+      table.integer('journeys') // The number of journeys in this story
       table.integer('barcode').unique().unsigned()
       table.timestamps()
     })

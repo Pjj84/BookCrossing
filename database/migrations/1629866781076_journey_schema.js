@@ -5,16 +5,16 @@ const Schema = use('Schema')
 
 class JourneySchema extends Schema {
   up () {
-    this.create('journeis', (table) => {
+    this.create('journeys', (table) => {
       table.increments()
-      table.integer('story_id').notNullabe()
-      table.foreign('story_id').references('story.id').onDelete('CASCADE')
+      table.integer('story_id').notNullable()
+      table.foreign('story_id').references('stories.id').onDelete('CASCADE')
       table.string('released_in') // Format => City/Neighberhood
-      table.timestamp('released_at').notNullable()
+      table.string('found_in') // Format => 
       table.text('description',200)
-      table.enum('release_type',['wild','controlled']).noyNullable()
-      table.integer('founder').notNullabe()
-      table.foreign('founder').references('users.id').onDelete('CASCADE')
+      table.enum('release_type',['wild','controlled'])
+      table.integer('user').notNullable()
+      table.foreign('user').references('users.id').onDelete('CASCADE')
       table.string('reading_time') // Format => YYYY-MM-DDTHH:mm:ss
       table.timestamps()
     })

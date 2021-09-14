@@ -7,12 +7,12 @@ class ReportsSchema extends Schema {
   up () {
     this.create('reports', (table) => {
       table.increments()
-      table.integer('reporter').notNulable()
+      table.integer('reporter').notNullable()
       table.integer('book_id')
       table.integer('journey_id')
       table.foreign('reporter').references('users.id').onDelete('CASCADE')
-      table.foreign('book_id').references('book.id').onDelete('CASCADE')
-      table.foreign('journey_id').references('journey.id').onDelete('CASCADE')
+      table.foreign('book_id').references('books.id').onDelete('CASCADE')
+      table.foreign('journey_id').references('journeys.id').onDelete('CASCADE')
       table.enum('description',['inappropriate','offensive','sexual']),{ useNative: true, enumName: 'report_type'}
       table.timestamps()
     })
