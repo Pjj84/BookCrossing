@@ -6,7 +6,6 @@ class JourneyController {
         try{
             const j = new Journey
             j.story_id = params.story_id
-            j.released_in = request.input('location')
             j.description = request.input('description')
             if( request.input('found_in') ){
                 j.found_in = request.input('found_in')
@@ -17,6 +16,8 @@ class JourneyController {
                 if( request.input('reading_time') ){
                     j.reading_time = request.input('reading_time')
                 }
+            }else{
+                return response.status(400) // You should have either released or found the book
             }
             return response.status(200)
         }catch(e){

@@ -14,6 +14,10 @@ class UserSchema extends Schema {
       table.enum('visibilty',['private','public']), { useNative: true, enumName: 'user_visibilty'}
       table.string('bio',120)
       table.string('profile').defaultTo('default.jpg')
+      table.string('reading_books') // Should be array like
+      table.string('read_books') // Should be array like
+      table.string('saved_books') // Should be array like
+      table.string('suggested_books') // Should be array like
       table.timestamps()
     })
   }

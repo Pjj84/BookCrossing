@@ -10,7 +10,7 @@ class StorySchema extends Schema {
       table.integer('book_id').notNullable()
       table.foreign('book_id').references('books.id')
       table.integer('journeys') // The number of journeys in this story
-      table.integer('barcode').unique().unsigned()
+      table.increments('barcode').unique().unsigned()
       table.timestamps()
     })
   }

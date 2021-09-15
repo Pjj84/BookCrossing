@@ -19,6 +19,7 @@ class UserController {
                     user.email = authenticated_user.email
                     user.password = authenticated_user.password
                     user.role = authenticated_user.role // The role of the user may be specified in a different way
+                    user.visibilty = 'public'
                     user.save()
                     const token = await auth.generate(user)
                     return response.status(200).json({token: token, user: user})
@@ -44,7 +45,7 @@ class UserController {
     }
     async Edit({request, response , params}){
         try{
-            const user = await User.find(params.id)
+            const user = await User.find(params.user_id)
             user.visibilty = request.input('visibilty') || user.visibilty
             user.bio = request.input('bio') || user.bio
             if(request.file('pic', {type: 'image',size: '2mb'})){
