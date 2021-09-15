@@ -6,16 +6,16 @@ class JourneyController {
         try{
             const j = new Journey
             j.story_id = params.story_id
-            j.released_in = request.location
-            j.description = request.description
-            if( request.found_in ){
-                j.found_in = request.found_in
-                j.founder = request.founder
-            }else if( request.released_in ){
-                j.released_in = request.released_in
-                j.release_type = request.release_type
-                if( request.reading_time ){
-                    j.reading_time = request.reading_time
+            j.released_in = request.input('location')
+            j.description = request.input('description')
+            if( request.input('found_in') ){
+                j.found_in = request.input('found_in')
+                j.founder = request.input('founder')
+            }else if( request.input('released_in') ){
+                j.released_in = request.input('released_in')
+                j.release_type = request.input('release_type')
+                if( request.input('reading_time') ){
+                    j.reading_time = request.input('reading_time')
                 }
             }
             return response.status(200)

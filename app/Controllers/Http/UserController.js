@@ -4,10 +4,10 @@ const Axios = use("Axios");
 const Helpers = use("Helpers");
 
 class UserController {
-    async Login({request, response}){
+    async Login({request, response, auth}){
         try{
             await auth.check()
-            return response.status(200)
+            return response.status(200).json({user: auth.getUser()})
         }catch(error){
             const api_token = request.header('api_token')
             await Axios.post('url',{ token: api_token }).then((res) => {

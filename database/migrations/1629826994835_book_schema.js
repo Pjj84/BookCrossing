@@ -7,6 +7,7 @@ class BookSchema extends Schema {
   up () {
     this.create('books', (table) => {
       table.increments()
+      table.string('name',25).notNullabe()
       table.integer('owner_id').notNullable()
       table.foreign('owner_id').references('users.id').onDelete('CASCADE')
       table.string('current_postion') // Format => City/Neighberhood
