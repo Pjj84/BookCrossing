@@ -4,6 +4,11 @@ const Story = use('App/Models/story')
 class JourneyController {
     async create({request, response, params}){
         try{
+            const story = await Story.findOrFail(params.story_id)
+            if( !story ){ return response.status(400) }
+            const book = await Book.findOrFail(story.book_id)
+            if( !book ){ return response.status(400) }
+            if( !request.input('isbn') || request.input('isbn') != book.isbn ){ return response.status(401) }
             const j = new Journey
             j.story_id = params.story_id
             j.description = request.input('description')
