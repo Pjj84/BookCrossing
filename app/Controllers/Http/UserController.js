@@ -2,6 +2,7 @@
 const User = use("App/Models/User");
 const Axios = use("Axios");
 const Helpers = use("Helpers");
+const Frienship = use("App/Models/Friendship")
 
 class UserController {
     async Login({request, response, auth}){
@@ -67,6 +68,43 @@ class UserController {
             return response.status(404)
         }
     }
+    async friendship_request({request, response, params, auth}){
+        try{
+            const user = await auth.getUser()
+            const receiver = await User.findOrFail(params.receiver_id)
+            if( !receiver ){ return response.status(404) }
+            const friendship = new Frienship
+            friendship.sender_id = user.id
+            friendship.receiver_id = params.
+            friendship.status = 'pending'
+            friendship.save()
+            return response.status(200)
+        }catch(e){
+            return response.status(500)
+        }
+    }
+    async accept_friendship_request({requestm, response, params, auth}){
+        try{
+            const friendship = await Frienship.findOrFail(params.friendship_id)
+            if( !friendship ){ return response.status(404) }
+            friendship.status = 'accepted'
+            friendship.save()
+            return response.status(200)
+        }catch(e){
+            return response.status(500)
+        }
+    }
+    async reject_friendship_request({request, response, params, auth}){
+        try{
+            const friendship = await Frienship.findOrFail(params.friendship_id)
+            if( !friendship ){ return response.satus(404) }
+            friendship.delete()
+            return response.status(200)
+        }catch(e){
+            return response.status(500)
+        }
+    }
+    
 }
 
 module.exports = UserController
