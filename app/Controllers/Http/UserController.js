@@ -75,8 +75,12 @@ class UserController {
             if( !receiver ){ return response.status(404) }
             const friendship = new Frienship
             friendship.sender_id = user.id
-            friendship.receiver_id = params.
-            friendship.status = 'pending'
+            friendship.receiver_id = params.receiver_id
+            if( receiver.visibilty == 'public'){
+                friendship.status = 'accepted'
+            }else{
+                friendship.status = 'pending'
+            }
             friendship.save()
             return response.status(200)
         }catch(e){
@@ -104,7 +108,7 @@ class UserController {
             return response.status(500)
         }
     }
-    
+
 }
 
 module.exports = UserController
