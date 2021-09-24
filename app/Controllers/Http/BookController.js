@@ -110,7 +110,7 @@ class BookController {
             if( !book ){ return response.status(400) }
             if( !request.input('isbn') || request.input('isbn') != book.isbn ){ return response.status(401) }
             let reading_books = user.reading_books
-            reading_books += "," + book.id
+            reading_books += "," + book.id.toString()
             user.reading_books = reading_books 
             user.save()
             return response.status(200)
@@ -126,7 +126,7 @@ class BookController {
             const reading_books = user.reading_books.split(',')
             if( !reading_books.includes(book.id) ){ return response.status(400) }
             const read_books = user.read_books
-            read_books += ',' + book.id
+            read_books += ',' + book.id.toString()
             user.read_books = read_books
             user.save()
             return response.status(200)
@@ -140,7 +140,7 @@ class BookController {
             const book = await Book.findOrFail(params.books_id)
             if( !book ){ return response.status(404) }
             const marked_books = user.marked_books
-            marked_books += ',' + book.id
+            marked_books += ',' + book.id.toString()
             user.marked_books = marked_books 
             user.save()
             return response.status(200)
@@ -154,15 +154,76 @@ class BookController {
             const book = await Book.findOrFail(params.book_id)
             if( !book ){ return response.status(404) }
             const reading_list = user.reading_list.split(',')
-
+            reading_list.splice(reading_list.indexOf(book.id.toString()),1)
+            user.reading_list = reading_list.join(',')
+            user.save()
+            return response.status(200)
         }catch(e){
-
+            return response.status(500)
         }
     }
-    async remove_from_read_list({}){}
-    async move_to_read_list({}){} // From reading list ofcourse
-    async show_my_books({}){} // Show the added, reading, read and marked books of user
-    async search_books({}){} // search for a specific book
+    async remove_from_read_list({request, response, params, auth}){
+        try{
+            const user = await auth.getUser()
+            const book = await Book.findOrFail(params.book_id)
+            if( !book ){ return response.status(404) }
+            const read_list = user.read_list.split(',')
+            read_list.splice(read_list.indexOf(book.id.toString()),1)
+            user.read_list = read_list.join(',')
+            user.save()
+            return response.status(200)
+        }catch(e){
+            return response.status(500)
+        }
+    }
+    async move_to_read_list({request, response, params, auth}){
+        try{
+            const user = await auth.getUser()
+            const book = await Book.findOrFail(params.book_id)
+            if( !book ){ return response.status(404) }
+            const reading_list = user.reading_list.split(',')
+            const read_list = user.read_list.split(',')
+            reading_list.splice(reading_list.indexOf(book.id.toString()),1)
+            read_list.push(book.id.toString())
+            user.reading_list = reading_list.join(',')
+            user.read_list = read_list.join(',')
+            user.save()
+            return response.status(200)
+        }catch(e){
+            return response.status(500)
+        }
+    }
+    async show_my_books({request, response, params, auth}){
+        try{
+            const user = await auth.getUser()
+            const added_books = await Book.query().where('owner_id',user.id).fetch()
+            // Fetching marked books
+            const marked_books_list = user.marked_book.split(',')
+            const marked_books = await Book.query().whereIn('id',marked_books_list).fetch()
+            // Fetching reading books
+            const reading_books_list = user.reading_list.split(',')
+            const reading_books = await Book.query().whereIn('id',reading_books_list).fetch()
+            // Fetching read books
+            const read_books_list = user.read_list.split(',')
+            const read_books = await Book.query().whereIn('id',read_books_list).fetch()
+            return response.status(200).json({
+                added_books: added_books,
+                marked_books: marked_books,
+                reading_books: reading_books,
+                read_books: read_books
+            })
+        }catch(e){
+            return response.status(500)
+        }
+    }
+    async search_books({request, response, params, auth}){
+        try{
+            const books = await Book.query().where('name',params.book_name).fetch()
+            return response.status(200).json({books: books})
+        }catch(e){
+            return response.status(500)
+        }
+    }
 }
 
 module.exports = BookController
