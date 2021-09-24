@@ -1,6 +1,7 @@
 'use strict'
 const Journey = use('App/Models/Journey')
 const Story = use('App/Models/story')
+const Friendship = use("App/Models/Friendship")
 class JourneyController {
     async create({request, response, params}){
         try{
@@ -39,8 +40,16 @@ class JourneyController {
     }
     async user_journeys({request, response, params}){
         try{
-            const user = await User.query().where('id',request.id).with('journey').fetch()
-            return response.status(200).json({journeys: user[0].journey})
+            const user = await auth.getuser()  
+            const target = await User.query().where('id',request.id).with('journey').first()
+            if( !target ){ return response.status(404) }
+            const friendship = await Friendship.query().where('sender_id',user.id).where('receiver_id',target.id).first()
+            || Friendship.query().where('sender_id',target.id).where('receiver_id',user.id).first()
+            if( target.visibility == 'public' || friendship ){
+                return response.status(200).json({journeys: target.journey})
+            }else{
+                return response.status(401) 
+            }
         }catch(e){
             return response.status(500)
         }

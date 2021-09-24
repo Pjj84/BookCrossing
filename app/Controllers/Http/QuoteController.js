@@ -1,6 +1,7 @@
 'use strict'
 const Quote = use("App/Models/Quote")
 const User = use("App/Models/User")
+const Friendship = use("App/Models/Friendship")
 
 class QuoteController {
     async create({request, response, params, auth}){
@@ -28,9 +29,16 @@ class QuoteController {
     }
     async show_by_user({request, response, params, auth}){
         try{
-            const user = await User.findOrFail(params.user_id)
-            if( !user ){ return response.status(404) }
-            const quotes = await Quote.findOrFail(params.user_id)
+            const user = await auth.getUser()
+            const target = await User.findOrFail(params.user_id)
+            if( !target ){ return response.status(404) }
+            const friendship = await Friendship.query().where('sender_id',user.id).where('receiver_id',target.id).first() 
+            || Friendship.query().where('sender_id',user_id).where('receiver_id',target.id).first()
+            if( target.visibility == 'public' || friendship ){
+                const quotes = await Quote.findOrFail(params.target_id)
+            }else{
+                return response.status(401)
+            }
             return response.status(200).json({quotes: quotes})
         }catch(e){
 

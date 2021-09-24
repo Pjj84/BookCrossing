@@ -9,7 +9,7 @@ class BookSchema extends Schema {
       table.increments()
       table.string('name',25).notNullabe()
       table.integer('owner_id').notNullable()
-      table.foreign('owner_id').references('users.id').onDelete('CASCADE')
+      table.foreign('owner_id').references('users.id')
       table.string('current_postion') // Format => City/Neighberhood
       table.string('isbn',13).notNullable()
       table.text('description',200).notNullable()
