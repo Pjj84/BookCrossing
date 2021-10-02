@@ -9,6 +9,7 @@ class NotificationSchema extends Schema {
       table.increments()
       table.integer('user_id')
       table.integer('creator_id')
+      table.integer('receiver_id')
       table.enum('table',['books','journeys','reports','quotes']),{ useNative: true, enumName: 'Table'}
       table.integer('row_id').unsigned()
       table.boolean('opened')

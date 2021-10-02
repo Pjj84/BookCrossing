@@ -7,9 +7,9 @@ class QuoteSchema extends Schema {
   up () {
     this.create('quotes', (table) => {
       table.increments()
-      table.integer('user_id').notNullabe()
+      table.integer('user_id').notNullable()
       table.foreign('user_id').references('users.id').onDelete('CASCADE')
-      table.text('text',300).notNullabe()
+      table.text('text',300).notNullable()
       table.timestamps()
     })
   }
