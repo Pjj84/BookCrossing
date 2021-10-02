@@ -7,7 +7,7 @@ class BookSchema extends Schema {
   up () {
     this.create('books', (table) => {
       table.increments()
-      table.string('name',25).notNullabe()
+      table.string('name',25).notNullable()
       table.integer('owner_id').notNullable()
       table.foreign('owner_id').references('users.id')
       table.string('current_postion') // Format => City/Neighberhood
@@ -15,9 +15,9 @@ class BookSchema extends Schema {
       table.text('description',200).notNullable()
       table.string('author',120).notNullable()
       table.string('cover_image').defaultTo('default_image.jpg')
-      table.enum('status',['pending','accepted']).notNullabe() 
-      table.integer('rates').unsigend() // The number of rates submited
-      table.integer('rating').unsigend() // The rating of the book
+      table.enum('status',['pending','accepted']).notNullable() 
+      table.integer('rates').unsigned() // The number of rates submited
+      table.integer('rating').unsigned() // The rating of the book
       table.timestamps()
     })
   }
