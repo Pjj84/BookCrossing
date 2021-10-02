@@ -9,9 +9,10 @@ class NotificationSchema extends Schema {
       table.increments()
       table.integer('user_id')
       table.integer('creator_id')
-      table.enum('table',['Book','Journeys','Report','Quote']),{ useNative: true, enumName: 'Table'}
+      table.enum('table',['books','journeys','reports','quotes']),{ useNative: true, enumName: 'Table'}
+      table.integer('row_id').unsigned()
       table.boolean('opened')
-      table.foreign('user_id').references('users.id').onDelete('CASCADE')
+      table.foreign('receiver_id').references('users.id').onDelete('CASCADE')
       table.foreign('creator_id').references('users.id').onDelete('CASCADE')
       table.timestamps()
     })

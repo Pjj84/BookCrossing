@@ -3,8 +3,9 @@ const Journey = use('App/Models/Journey')
 const Story = use('App/Models/story')
 const Friendship = use("App/Models/Friendship")
 class JourneyController {
-    async create({request, response, params}){
+    async create({request, response, params, auth}){
         try{
+            const user = await auth.getUser()
             const story = await Story.findOrFail(params.story_id)
             if( !story ){ return response.status(400) }
             const book = await Book.findOrFail(story.book_id)
@@ -25,7 +26,22 @@ class JourneyController {
             }else{
                 return response.status(400) // You should have either released or found the book
             }
-            return response.status(200)
+            response.status(200).send()
+            j.save()
+            const friendships = await Database.select('sender_id','receiver_id').from('friendships').where('sender_id',user.id).orWhere('receiver_id',user.id)
+            for(i=0;i<=friends_count;i++){
+                const notif = new Notif
+                notif.creator_id = user.id
+                if( friendships[i].sender_id == user.id ){
+                    notif.receiver_id = friendships[i].receiver_id                    
+                }else{
+                    notif.receiver_id = friendships[i].sender_id
+                }
+                notif.table = 'journeys'
+                notif.opened = false
+                notif.row_id = j.id
+                notif.save()
+            }
         }catch(e){
             return response.status(500)
         }

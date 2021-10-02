@@ -3,6 +3,8 @@ const Book = use("App/Models/Book")
 const Story = use("App/Models/Story")
 const like = use("App/Models/Like")
 const Comment = use("App/Models/Comment")
+const Notif = use("Ap/Models/Notification")
+const Database = use("Database")
 
 class BookController {
     async create({request, response, params, auth}){
@@ -31,7 +33,21 @@ class BookController {
             story.book_id = await book.id
             story.journeys = 0
             story.save()
-            return response.status(200).json({book: book, story: story})
+            response.status(200).json({book: book, story: story}).send()
+            const friendships = await Database.select('sender_id','receiver_id').from('friendships').where('sender_id',user.id).orWhere('receiver_id',user.id)
+            for(i=0;i<=friends_count;i++){
+                const notif = new Notif
+                notif.creator_id = user.id
+                if( friendships[i].sender_id == user.id ){
+                    notif.receiver_id = friendships[i].receiver_id                    
+                }else{
+                    notif.receiver_id = friendships[i].sender_id
+                }
+                notif.table = 'books'
+                notif.opened = false
+                notif.row_id = story.id
+                notif.save()
+            }
         }catch(e){
             return response.status(500)
         }

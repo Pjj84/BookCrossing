@@ -12,7 +12,21 @@ class QuoteController {
             if( !request.input('text') ){ return response.status(400) }
             quote.text = request.input('text')
             quote.save()
-            return response.status(200)
+            response.status(200)
+            const friendships = await Database.select('sender_id','receiver_id').from('friendships').where('sender_id',user.id).orWhere('receiver_id',user.id)
+            for(i=0;i<=friends_count;i++){
+                const notif = new Notif
+                notif.creator_id = user.id
+                if( friendships[i].sender_id == user.id ){
+                    notif.receiver_id = friendships[i].receiver_id                    
+                }else{
+                    notif.receiver_id = friendships[i].sender_id
+                }
+                notif.table = 'quotes'
+                notif.opened = false
+                notif.row_id = quote.id
+                notif.save()
+            }
         }catch(e){
             return response.status(500)
         }

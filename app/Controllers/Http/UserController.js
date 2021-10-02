@@ -3,6 +3,8 @@ const User = use("App/Models/User");
 const Axios = use("Axios");
 const Helpers = use("Helpers");
 const Frienship = use("App/Models/Friendship")
+const Notification = use("App/Models/Notification")
+const Database = use("App/Models/Database")
 
 class UserController {
     async Login({request, response, auth}){
@@ -108,7 +110,43 @@ class UserController {
             return response.status(500)
         }
     }
-
+    async show_notification({request, response, params, auth}){
+        try{
+            const user = await auth.getUser()
+            const notifs = await Notification.query().where('receiver_id',user.id).where('opened',false).fetch()
+            const notifs_array = []
+            for(let notif of notifs){
+                if( notif.table == "books" ){
+                    const book = await Book.findOrFail(notif.row_id)
+                    notif.opened = true
+                    notif.save()
+                    notif.conetent = book
+                    notifs_array.push(notif)
+                }else if( notif.table == "journeys" ){
+                    const journey = await journey.findOrFail(notif.row_id)
+                    notif.opened = true
+                    notif.save()
+                    notif.content = journey
+                    notifs_array.push(notif)
+                }else if( notif.table == "reports"){
+                    const report = await Report.findOrFail(notif.row_id)
+                    notif.opened = true
+                    notif.save()
+                    notif.content = report
+                    notifs_array.push(notif)
+                }else if( notif.table == 'quotes' ){
+                    const quote = await Quote.findOrFail(notif.row_id)
+                    notif.opened = true
+                    notif.save()
+                    notif.content = quote
+                    notifs_array.push(notif)
+                }
+            }
+            return response.status(200).json({notifications: notifs_array}) // Mahdi should use the table property of notif to determine the type of notification
+        }catch(e){
+            return response.status(500)
+        }
+    }
 }
 
 module.exports = UserController
