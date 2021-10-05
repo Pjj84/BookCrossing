@@ -8,8 +8,8 @@ class UserSchema extends Schema {
     this.create('users', (table) => {
       table.increments()
       table.string('email', 254).notNullable().unique()
-      table.string('first_name',30)
-      table.string('last_name',30)
+      table.string('first_name',30).notNullabe()
+      table.string('last_name',30).notNullable()
       table.enum("role",['normal','admin']), { useNative: true, enumName: 'user_role'}
       table.enum('visibilty',['private','public']), { useNative: true, enumName: 'user_visibilty'}
       table.string('bio',120)
