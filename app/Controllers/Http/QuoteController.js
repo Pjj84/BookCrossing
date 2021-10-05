@@ -41,7 +41,7 @@ class QuoteController {
             return response.status(500)
         }
     }
-    async show_by_user({request, response, params, auth}){
+    async show_by_user({request, response, params, auth}){ // In users route
         try{
             const user = await auth.getUser()
             const target = await User.findOrFail(params.user_id)
