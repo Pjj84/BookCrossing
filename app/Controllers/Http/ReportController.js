@@ -43,7 +43,7 @@ class ReportController {
             return response.status(500)
         }
     }
-    async show_all_reports({request, response, params, auth}){
+    async all_reports({request, response, params, auth}){
         try{
             const reports = await Report.all()
             return response.status(200).json({reports: reports})
@@ -51,7 +51,7 @@ class ReportController {
             return response.status(500)
         }
     }
-    async show_book_reports({request, response, params, auth}){
+    async books_reports({request, response, params, auth}){
         try{
             const reports = await Report.query().whereNotNull('book_id').fetch()
             return response.status(200).json({reports: reports})
@@ -59,7 +59,7 @@ class ReportController {
             return response.status(500)
         }
     }
-    async show_journeys_reports({request, response, params, auth}){
+    async journeys_reports({request, response, params, auth}){
         try{
             const reports = await Report.query().whereNotNull('journey_id').fetch()
             return response.status(200).json({reports: reports})
@@ -67,7 +67,7 @@ class ReportController {
             return response.status(500)
         }
     }
-    async show_users_reports({request, response, params, auth}){
+    async users_reports({request, response, params, auth}){
         try{
             const reports = await Report.query().whereNotNull('user_id').fetch()
             return response.status(200).json({reports: reports})
@@ -75,7 +75,7 @@ class ReportController {
             return response.status(500)
         }
     }
-    async show_single_book({request, response, params, auth}){
+    async single_book({request, response, params, auth}){
         try{
             const book = await Book.findOrFail(params.book_id)
             if( !book ){ return response.status(404) }
@@ -84,7 +84,7 @@ class ReportController {
             return response.status(500)
         }
     }
-    async show_single_journey({request, response, params, auth}){
+    async single_journey({request, response, params, auth}){
         try{
             const journey = await Journey.findOrFail(params.journey_id)
             if( !journey ){ return response.status(404) }
@@ -93,7 +93,7 @@ class ReportController {
             return response.status(500)
         }
     }
-    async show_single_user({request, response, params, auth}){
+    async single_user({request, response, params, auth}){
         try{
             const user = await User.findOrFail(params.user_id)
             if( !user ){ return response.status(404) }
