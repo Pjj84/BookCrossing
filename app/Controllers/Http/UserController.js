@@ -4,19 +4,15 @@ const Axios = use("Axios");
 const Helpers = use("Helpers");
 const Frienship = use("App/Models/Friendship")
 const Notification = use("App/Models/Notification")
-const Database = use("App/Models/Database")
+const Database = use("Database")
 
 class UserController {
     async Login({request, response, auth}){
-        try{
-            await auth.check()
-            return response.status(200).json({user: auth.getUser()})
-        }catch(error){
             const api_token = request.header('api_token')
             await Axios.post('url',{ token: api_token }).then((res) => {
             if(res.status == 200){
-                const authenticated_user = res.user
-                let user = await User.query().where('email',authenticated_user.email).first()
+                const authenticated_user = res.user;
+                //let user = await User.query().where('email',authenticated_user.email).first()
                 if(!user){
                     let user = new User
                     user.email = authenticated_user.email
@@ -24,7 +20,7 @@ class UserController {
                     user.role = authenticated_user.role // The role of the user may be specified in a different way
                     user.visibilty = 'public'
                     user.save()
-                    const token = await auth.generate(user)
+                    //const token = await auth.generate(user)
                     return response.status(200).json({token: token, user: user})
                 }else{
                     if(user.first_name != authenticated_user.first_name && user.last_name != authenticated_user.last_name){
@@ -32,7 +28,7 @@ class UserController {
                         user.last_name = authenticated_user.last_name
                         user.save()
                     }
-                    const token = await auth.generate(user)
+                    //const token = await auth.generate(user)
                     return response.status(200).json({token: token, user: user})
                 }
             }else if(res.status == 401){
@@ -44,7 +40,6 @@ class UserController {
             }).catch((error) => {
                 return response.status(500).json({ error: error })
             })
-        }
     }
     async Edit({request, response , params}){
         try{
@@ -73,7 +68,7 @@ class UserController {
     async friendship_request({request, response, params, auth}){
         try{
             const user = await auth.getUser()
-            const receiver = await User.findOrFail(params.receiver_id)
+            const receiver = await User.query().where('id',params.receiver_id).first()
             if( !receiver ){ return response.status(404) }
             const friendship = new Frienship
             friendship.sender_id = user.id
