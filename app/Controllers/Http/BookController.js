@@ -3,7 +3,7 @@ const Book = use("App/Models/Book")
 const Story = use("App/Models/Story")
 const like = use("App/Models/Like")
 const Comment = use("App/Models/Comment")
-const Notif = use("Ap/Models/Notification")
+const Notif = use("App/Models/Notification")
 const Database = use("Database")
 
 class BookController {
@@ -84,14 +84,18 @@ class BookController {
         try{
             const comment = new Comment
             const user = await auth.getUser()
-            comment.book_id = params.book_id
+            if( params.book_id ){
+                comment.book_id = params.book_id
+            }else if( params.quote_id ){
+                comment.quote_id = params.quote_id
+            }
             comment.user_id = user.id
             if( !request.input('comment_text') ){
                 return reespones.status(400)
             }
             comment.text = request.input('text')
             if( params.replying_to ){
-                comment.replying_to = params.replyed_comment_id
+                comment.replying_to = params.replying_to
             }
             comment.save()
             return response.status(200)
@@ -100,18 +104,18 @@ class BookController {
         }
     }
 
-    async show_single_book({request, response, params, auth}){
+    async single_book({request, response, params, auth}){
         try{
             const book = await Book.findOrFail(params.book_id)
             if( !book ){ return response.status(400) }
             const likes = await Like.query().where('book_id',params.book_id).fetch()
-            const comments = await Comment.query().where('book_id',params.id).fetch()
+            const comments = await Comment.query().where('book_id',params.book_id).fetch()
             return response.status(200).json({book: book, like: likes, comments: comments})
         }catch(e){
             return response.status(500)
         }
     }
-    async show_all_of_books({request, response, params, auth}){
+    async all_books({request, response, params, auth}){
         try{
             const books = await Book.all()
             return response.status(200).json({books: books})
@@ -119,7 +123,7 @@ class BookController {
             return response.status(500)
         }
     }
-    async add_to_reading_books({request, response, params, auth}){
+    async add_to_reading_list({request, response, params, auth}){
         try{
             const user = await auth.getUser()
             const book = await Book.findOrFail(params.book_id)
@@ -150,7 +154,7 @@ class BookController {
             return response.status(500)
         }
     }
-    async mark_book({request, response, params, auth}){
+    async mark({request, response, params, auth}){
         try{
             const user = await auth.getUser()
             const book = await Book.findOrFail(params.books_id)
@@ -209,7 +213,7 @@ class BookController {
             return response.status(500)
         }
     }
-    async show_my_books({request, response, params, auth}){
+    async my_books({request, response, params, auth}){
         try{
             const user = await auth.getUser()
             const added_books = await Book.query().where('owner_id',user.id).fetch()
@@ -232,12 +236,21 @@ class BookController {
             return response.status(500)
         }
     }
-    async search_books({request, response, params, auth}){
+    async search({request, response, params, auth}){
         try{
             const books = await Book.query().where('name',params.book_name).fetch()
             return response.status(200).json({books: books})
         }catch(e){
             return response.status(500)
+        }
+    }
+    async cover_image({request, response, params, auth}){
+        try{
+            const book = await Book.findOrFail(params.book_id)
+            if( !book ){ return response.status(404) }
+            return response.status(200).json({image: book.cover_image})
+        }catch(e){
+            return response
         }
     }
 }
