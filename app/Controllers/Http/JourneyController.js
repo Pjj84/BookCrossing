@@ -46,9 +46,9 @@ class JourneyController {
             return response.status(500)
         }
     }   
-    async book_journeys({request, response, params}){
+    async books_journeys({request, response, params}){
         try{
-            const story = await Story.query().where('book_id',request.id).with('journey').fetch()
+            const story = await Story.query().where('book_id',params.book_id).with('journey').fetch()
             return response.status(200).josn({journey: story[0].journey})
         }catch(e){
             return response.status(500)
@@ -57,7 +57,7 @@ class JourneyController {
     async user_journeys({request, response, params}){
         try{
             const user = await auth.getuser()  
-            const target = await User.query().where('id',request.id).with('journey').first()
+            const target = await User.query().where('id',user.user_id).with('journey').first()
             if( !target ){ return response.status(404) }
             const friendship = await Friendship.query().where('sender_id',user.id).where('receiver_id',target.id).first()
             || Friendship.query().where('sender_id',target.id).where('receiver_id',user.id).first()
