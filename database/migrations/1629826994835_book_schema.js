@@ -10,14 +10,12 @@ class BookSchema extends Schema {
       table.string('name',25).notNullable()
       table.integer('owner_id').notNullable()
       table.foreign('owner_id').references('users.id')
-      table.string('current_postion') // Format => City/Neighberhood
+      table.string('current_location') // Format => City/Neighberhood
       table.string('isbn',13).notNullable()
       table.text('description',200).notNullable()
       table.string('author',120).notNullable()
       table.string('cover_image').defaultTo('default_image.jpg')
       table.enum('status',['pending','accepted']).notNullable() 
-      table.integer('rates').unsigned() // The number of rates submited
-      table.integer('rating').unsigned() // The rating of the book
       table.timestamps()
     })
   }
