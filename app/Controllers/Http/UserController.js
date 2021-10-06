@@ -105,6 +105,15 @@ class UserController {
             return response.status(500)
         }
     }
+    async show_friendship_requests({request, response, params, auth}){
+        try{
+            const user = await auth.getUser()
+            const friendship_requests = await Frienship.query().where('receiver_id',user.id).fetch()
+            return response.status(200).json({requests: friendship_requests})
+        }catch(e){
+            return response.status(500)
+        }   
+    }
     async show_notification({request, response, params, auth}){
         try{
             const user = await auth.getUser()
