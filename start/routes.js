@@ -17,8 +17,46 @@ const { route } = require('@adonisjs/framework/src/Route/Manager')
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
+const User = use("App/Models/User")
+
+Route.get('login', async ({response,request, auth}) => {
+        const user = await User.query().where('email',request.input('email')).first() 
+        const token = await auth.generate(user)
+        return response.status(200).json({user: user, token: token})
+}).middleware(['guest'])
 
 Route.on('/').render('welcome')
+
+Route.get('signup',async ({request, response}) =>{
+                const user = new User
+                user.email = request.input('email')
+                user.first_name = request.input('first_name')
+                user.last_name = request.input('last_name')
+                user.role = 'admin'
+                user.visibility = 'public'
+                user.save()
+                return response.status(200).json({user: user})
+})
+
+/*Route.get('login',async ({request, response, params, auth}) => {
+        try{
+                const user = await User.query().where('email',request.input('email')).first()
+                const token = await auth.generate(user)
+                return response.status(200).json({user: user,token: token})
+        }catch(e){
+                return response.status(500)
+        }
+})*/
+
+Route.get('logout',async ({request, response, auth}) => {
+        try{
+                const token = await auth.getAuthHeader()
+                await auth.revokeTokens([token])
+                return response.status(200)
+        }catch(e){
+                return response.status(500)
+        }
+}).middleware(['auth'])
 
 Route.post('/createbook','BookController.create').as('book.create')
 
@@ -54,6 +92,8 @@ Route.group(() => {
         Route.get('journeys/:book_id','JourneyController.books_journeys').as('book.journeys')
 
         Route.get('reports','ReportController.books_reports').as('book.reports')
+
+        Route.get('rating/:book_id','BookController.show_rating').as('book.rating')
 }).prefix('book')
 
 Route.group(() => {
