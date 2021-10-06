@@ -5,12 +5,13 @@ const like = use("App/Models/Like")
 const Comment = use("App/Models/Comment")
 const Notif = use("App/Models/Notification")
 const Database = use("Database")
+const Rating = use("App/Models/Rating")
 
 class BookController {
     async create({request, response, params, auth}){
-        try{
-            if( !request.input("isbn") || !request.input('name') || !/^[a-z]+\/[a-z]+$/.test(request.input('loacation')) || !request.input('current_location') || !request.input('description') || !request.input('author') ){
-                return response.status(400)
+        //try{
+            if( !request.input("isbn") || !request.input('name') || !/^[a-z]+\/[a-z]+$/.test(request.input('location')) || !request.input('location') || !request.input('description') || !request.input('author') ){
+                return response.status(400).send()
             }
             const user = await auth.getUser()
             const book = new Book
@@ -28,14 +29,15 @@ class BookController {
             }
             book.status = "pending"
             book.rates = 0
-            book.save()
+            book.isbn = request.input('isbn')
+            const book_id = await book.save()
             const story = new Story
-            story.book_id = await book.id
+            story.book_id = book_id
             story.journeys = 0
             story.save()
-            response.status(200).json({book: book, story: story}).send()
+            response.status(200).json({book: book, story: story})
             const friendships = await Database.select('sender_id','receiver_id').from('friendships').where('sender_id',user.id).orWhere('receiver_id',user.id)
-            for(i=0;i<=friends_count;i++){
+            for(let i = 0;i < friendships.length ; i++){
                 const notif = new Notif
                 notif.creator_id = user.id
                 if( friendships[i].sender_id == user.id ){
@@ -48,24 +50,49 @@ class BookController {
                 notif.row_id = story.id
                 notif.save()
             }
-        }catch(e){
-            return response.status(500)
-        }
+        //}catch(e){
+          //  return response.status(500).send()
+        //}
     }
     async rate({request, response, params, auth}){
-        try{
-            if( !request.input('rating') || typeof request.input('rating') != 'int' ||  request.input('rating') < 0 || request.input('rating') > 10 ){
-                return response.status(400)
+        //try{
+            let rating
+            if( !request.input('rating') ||  request.input('rating') < 0 || request.input('rating') > 10 ){
+                return response.status(400).send()
+            }
+            try{
+                rating = parseInt(request.input('rating'))
+            }catch(e){
+                return response.status(432).send() // 432 status code means the input is not integer
             }
             const book = await Book.findOrFail(params.book_id)
+            const user = await auth.getUser()
             if( !book ){ return response.status(400) }
-            book.rating = (book.rating * book.rates + request.input('rating')) / (book.rates + 1)
-            book.rates++
-            book.save()
-            if( book.rating < 0 || book.rating > 10){ throw new Error }
-        }catch(e){
-            return response.status(500)
-        }
+            let rate = await Rating.query().where('user_id',user.id).first()
+            if( !rate){ 
+                rate = new Rating
+                rate.book_id = book.id
+                rate.user_id = user.id
+                rate.rating = rating
+            }else{
+                rate.rating = rating
+            }
+            if( rate.rating < 0 || rate.rating > 10){ throw new Error }
+            rate.save()
+            return response.status(200).send()
+        //}catch(e){
+           // return response.status(500)
+        //}
+    }
+    async show_rating({request, response, params, auth}){ // Only for a single book
+        //try{
+            const book = await Book.findOrFail(params.book_id)  
+            if( !book ){ return response.status(404) }
+            const rate = await Database.from('ratings').where('book_id',book.id)
+            return response.status(200).json({rating: rate})
+        //}catch(e){
+          //  return response.status(500).send()
+        //}
     }
     async like({request, response, params, auth}){
         try{
