@@ -62,7 +62,7 @@ Route.post('/createbook','BookController.create').as('book.create')
 
 Route.post('/rate/:book_id','BookController.rate').as('book.rate')
 
-Route.post('/like/:book_id/:like_type','BookController.like').as('book.like')
+Route.post('/like/:book_id?/:quote_id?/:like_type','BookController.like').as('book.like')
 
 Route.post('/comment/:book_id?/:quote_id?','BookController.comment').as('book.comment')
 
@@ -94,6 +94,10 @@ Route.group(() => {
         Route.get('reports','ReportController.books_reports').as('book.reports')
 
         Route.get('rating/:book_id','BookController.show_rating').as('book.rating')
+
+        Route.get('likes/:book_id','BookController.show_likes').as('book.likes')
+
+        Route.get('comments/:book_id','BookController.show_comments').as('book.comments')
 }).prefix('book')
 
 Route.group(() => {
