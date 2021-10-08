@@ -77,11 +77,7 @@ Route.group(() => {
 
         Route.post('add/mark/:book_id','BookController.mark').as('book.mark')
 
-        Route.delete('rmv/reading/:book_id','BookController.remove_from_reading_list').as('remove_from_reading_list')
-
-        Route.delete('rmv/read/:book_id','BookController.remove_from_read_list').as('book.remove_from_read_list')
-
-        Route.post('move/:book_id','BookController.move_to_read').as('book.move')
+        Route.post('move/:book_id','BookController.move_to_read_list').as('book.move')
 
         Route.get('my','BookController.my_books').as('book.my')
 
