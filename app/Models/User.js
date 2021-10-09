@@ -19,6 +19,12 @@ class User extends Model {
         userInstance.password = await Hash.make(userInstance.password)
       }
     })
+
+    this.addHook('beforeSave', async (user) => {
+      if( user.reading_books == "" ){ user.reading_books = null }
+      if( user.read_books == "" ){ user.rad_books = null }
+      if( user.marked_books == "" ){ user.marked_books = null }
+    })
   }
 
   /**
