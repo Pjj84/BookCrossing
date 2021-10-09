@@ -7,6 +7,7 @@ const Notif = use("App/Models/Notification")
 const Database = use("Database")
 const Rating = use("App/Models/Rating")
 const Like = use('App/Models/Like')
+const Helpers = use('Helpers')
 
 class BookController {
     async create({request, response, params, auth}){
@@ -25,7 +26,7 @@ class BookController {
             book.author = request.input('author')
             if(request.file('cover_image', {type: 'image',size: '2mb'})){
                 const cover_image = request.file('cover_image', {types: ['image'],size: '2mb'})
-                const date = new Date
+                let date = new Date
                 date = date.toISOString()
                 await cover_image.move(Helpers.tmpPath('coverImages'), { name:  date, overwrite: true})
                 book.cover_image = date
@@ -244,23 +245,23 @@ class BookController {
                 user.reading_books = reading_list.join(',')
                 user.read_books = read_list.join(',')
                 user.save()
-            return response.status(200).json({user: user})
+            return response.status(200).send()
         //}catch(e){
           //  return response.status(500).send()
         //}
     }
     async my_books({request, response, params, auth}){
-        try{
+       //try{
             const user = await auth.getUser()
             const added_books = await Book.query().where('owner_id',user.id).fetch()
             // Fetching marked books
-            const marked_books_list = user.marked_book.split(',')
+            const marked_books_list = user.marked_books ? user.marked_books.split(',') : []
             const marked_books = await Book.query().whereIn('id',marked_books_list).fetch()
             // Fetching reading books
-            const reading_books_list = user.reading_list.split(',')
+            const reading_books_list = user.reading_books ? user.reading_books.split(',') : []
             const reading_books = await Book.query().whereIn('id',reading_books_list).fetch()
             // Fetching read books
-            const read_books_list = user.read_list.split(',')
+            const read_books_list = user.read_books ? user.read_books.split(',') : []
             const read_books = await Book.query().whereIn('id',read_books_list).fetch()
             return response.status(200).json({
                 added_books: added_books,
@@ -268,26 +269,31 @@ class BookController {
                 reading_books: reading_books,
                 read_books: read_books
             })
-        }catch(e){
-            return response.status(500)
-        }
+        //}catch(e){
+          //  return response.status(500).send()
+        //}
     }
     async search({request, response, params, auth}){
-        try{
-            const books = await Book.query().where('name',params.book_name).fetch()
-            return response.status(200).json({books: books})
-        }catch(e){
-            return response.status(500)
-        }
+        //try{
+            const query = request.get()
+            const books = await Database.select('*').from('books')
+            const suggested_books = []
+            for(let book of books){
+                if( book.name.includes(query.book_name) ){ suggested_books.push(book)}
+            }
+            return response.status(200).json({books: suggested_books})
+        //}catch(e){
+            return response.status(500).sned()
+        //}
     }
     async cover_image({request, response, params, auth}){
-        try{
+        //try{
             const book = await Book.findOrFail(params.book_id)
             if( !book ){ return response.status(404) }
             return response.status(200).json({image: book.cover_image})
-        }catch(e){
-            return response
-        }
+        //}catch(e){
+            //return response
+        //}
     }
 }
 
