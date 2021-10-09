@@ -79,9 +79,9 @@ Route.group(() => {
 
         Route.post('move/:book_id','BookController.move_to_read_list').as('book.move')
 
-        Route.get('my','BookController.my_books').as('book.my')
+        Route.get('my','BookController.my_books').as('book.my').middleware(['auth'])
 
-        Route.get('find/:book_name',"BookController.search").as('book.find')
+        Route.get('find',"BookController.search").as('book.find').middleware(['auth'])
 
         Route.get('cover/:book_id','BookController.cover_image').as('book.cover')
 
