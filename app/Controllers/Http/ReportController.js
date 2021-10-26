@@ -2,7 +2,7 @@
 const Report = use("App/Models/Report")
 const User = use("App/Models/User")
 const Book = use("App/Models/Book")
-const Journey = use("App/Modles/Journey")
+const Journey = use("App/Models/Journey")
 
 class ReportController {
     async create({request, response, params, auth}){
