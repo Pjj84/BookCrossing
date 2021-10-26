@@ -91,8 +91,8 @@ class BookController {
         //try{
             const book = await Book.findOrFail(params.book_id)  
             if( !book ){ return response.status(404) }
-            const rate = await Database.from('ratings').where('book_id',book.id)
-            return response.status(200).json({rating: rate})
+            const rate = await Database.from('ratings').where('book_id',book.id).avg('rate')
+            return response.status(200).json({rating: parseInt(rate[0].avg)})
         //}catch(e){
           //  return response.status(500).send()
         //}
